@@ -1,0 +1,43 @@
+
+
+🔍 Object.entries(obj) — What Does It Return?
+
+const obj = {
+  a: "apple",
+  b: "banana"
+};
+
+console.log(Object.entries(obj));
+
+👉 It returns:
+[
+  ['a', 'apple'],
+  ['b', 'banana']
+]
+
+Each item is an array with 2 elements → [key, value]
+
+
+🧠 So When You Do: Object.entries(obj).map(([key, value]) => ...)
+
+✅ You're saying:
+
+“Hey JavaScript, for each inner array like ['a', 'apple'], please unpack it into key and value.”
+
+❌ What Happens If You Remove the Square Brackets?
+
+When you do:  Object.entries(obj).map((key, value) => ...)
+
+Here’s what goes wrong:
+map() passes only 1 argument — the array ['a', 'apple']
+But you're asking for two: key and value
+
+So:
+key = ['a', 'apple'] ✅
+value = ❌ undefined
+
+Result:
+
+{key} → becomes ['a', 'apple'], which when converted to string becomes "a,apple"
+
+navigate(value) → value is undefined → doesn't navigate!

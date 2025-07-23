@@ -1,0 +1,140 @@
+
+Faiz Understanding:
+
+When you want to change mvc behaviour ,like if you connect or make relation between your frontend and backend , frontend is "view" and 
+backend is "model/controller" liken thing , so when you want to change process/behaviour between these MVC thing.
+
+So when we say:
+🧠 “We are customizing the MVC behavior”...
+
+It means:
+We are changing how Spring handles requests, views, and responses.
+
+For example:
+Adding CORS support (like your example)
+Adding Interceptors (e.g., logging, auth)
+Configuring how static files are served
+Changing view resolvers (like JSP folders)
+Adding formatters, argument resolvers
+
+We customize it using the WebMvcConfigurer -->  because it holds the mvc behaviour changing methods like things.\
+
+🎯 WebMvcConfigurer helps to customize MVC behavior
+
+The interface WebMvcConfigurer allows you to say: 
+    “Spring, change this default MVC setting... I want it my way.” 😎
+
+Here we use this to customize the cors behaviour.
+
+WebMvcConfigurer has a method: void addCorsMappings(CorsRegistry registry);
+
+Which allows us to customize the allowed cors origin and allow cors origin for specific path like things.
+
+IMPLEMENTATION:
+
+public interface WebMvcConfigurer {
+   default void addViewControllers(...) {...}
+   default void configureMessageConverters(...) {...}
+   // ...
+   void addCorsMappings(CorsRegistry registry); // <- only one non-default method
+}
+
+@Bean
+public WebMvcConfigurer corsConfigurer() {
+
+    // OPTION 1: overriding the methoid directly and make the WebMvcConfigurer as bean ,so spring can use it.
+
+    return new WebMvcConfigurer() {
+        @Override
+        public void addCorsMappings(CorsRegistry registry) { //built-in method in WebMvcConfigurer to handle cors
+
+            //adding the specific api which should allow the origin of our frontend.
+            registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+        }
+    };
+}
+
+//OPTION 2: creating a class and annotate it as @Configuration and make the class implements WebMvcConfigurer(so that we can override the method)
+
+@Configuration
+public class MyCorsConfig implements WebMvcConfigurer {
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000");
+    }
+}
+
+Since we annotate the class as @Configuration and this class implements WebMvcConfigurer,so spring creates the "bean" for this class.
+so its like.. like... we have a bean of WebMvcConfigurer(this class) ,so spring can use it. 
+
+Additional Methods:
+
+.allowedMethods("GET", "POST", "PUT", "DELETE")
+.allowedHeaders("*")
+.allowCredentials(true)  // allow cookies / auth headers
+.maxAge(3600); 
+
+✅ .allowedMethods("GET", "POST", "PUT", "DELETE")
+🔍 What it means:
+"Only allow requests with these HTTP methods from the frontend."
+
+🚦 Example:
+If your React app tries to call:
+fetch("/api/user", { method: "DELETE" });
+✅ It will work because DELETE is allowed.
+
+If it tries:
+fetch("/api/user", { method: "PATCH" });
+❌ It will be blocked by the browser’s CORS policy because PATCH is not in the list.
+
+💡 Use it when:
+You want to limit what HTTP actions your frontend is allowed to perform.
+
+✅ .allowedHeaders("*")
+🔍 What it means:
+"Allow the frontend to send any custom headers in the request."
+
+🔐 Why it matters:
+Browsers block requests that include non-simple headers (like Authorization, Content-Type, X-Custom-Token, etc.) — unless you explicitly allow them.
+
+🚦 Examples:
+✅ Allow sending Authorization: Bearer token
+✅ Allow Content-Type: application/json
+✅ Allow any header your frontend adds
+🧠 * means: "Allow all headers"
+
+✅ .allowCredentials(true)
+
+🔍 What it means:
+"Allow the frontend to send cookies, session IDs, or Authorization headers."
+
+🍪 When you need it:
+When your frontend calls:
+
+fetch("http://localhost:8080/api", {
+  method: "GET",
+  credentials: "include"
+});
+
+This will:
+Send cookies like JSESSIONID
+Or Authorization headers
+✅ Works only if this is set to true
+
+⚠️ Important Rule:
+If you use .allowCredentials(true), you cannot use allowedOrigins("*")
+
+You must use a specific origin like:
+.allowedOrigins("http://localhost:3000")
+
+✅ .maxAge(3600)
+
+🔍 What it means:
+"Tell the browser to remember the CORS permissions for 3600 seconds (1 hour)."
+
+🧠 Why it exists:
+When the frontend sends a non-simple request (like POST with headers), the browser first sends an OPTIONS request (called a preflight).
+This checks: "Is this method allowed? Are these headers allowed?"
+Without maxAge, the browser does this check every single time.
+✅ With .maxAge(3600), the browser remembers the permission for 1 hour, and skips the OPTIONS call next time.

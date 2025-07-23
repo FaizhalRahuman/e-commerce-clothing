@@ -1,0 +1,67 @@
+
+✅ 1. MainRoutes Object Configuration (Declarative Routing Configuration)
+
+const DeleteAlbumPage = Loadable(lazy(() => import('pages/albums/deleteAlbum')));
+
+const MainRoutes = {
+  path: '/',
+  element: <MainLayout />,
+  children: [
+    {
+      path: '',
+      element: <AlbumsPage />
+    },
+    {
+      path: 'delete-album',
+      element: <DeleteAlbumPage />
+    }
+  ]
+};
+
+🔍 Explanation:
+
+This is an object-based routing configuration (often used with frameworks like react-router-config or libraries built on top of React Router).
+It allows you to define nested routes in a structured tree, which can be processed programmatically.
+You can pass this config to custom routing functions or loop over it to generate routes.
+Useful for large applications with deeply nested layouts, tabs, or dynamically generated routes.
+
+💡 When to Use:
+Complex apps with nested routing.
+Centralized route management (route guards, permissions, layout control).
+Reusable route trees (e.g., using with <useRoutes()> in React Router v6+).
+
+✅ 2. Direct JSX-Based Routing (Imperative JSX Routing)
+
+import Home from '../pages/Home';
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path='/' element={<Home />} />
+    </Routes>
+  );
+};
+
+🔍 Explanation:
+
+This is the standard way of declaring routes using JSX components from React Router v6+.
+Easy to understand and intuitive for small to medium-sized apps.
+Routes are defined in-line and rendered directly via <Routes> and <Route> tags.
+Provides full control of each route's structure in JSX.
+
+💡 When to Use:
+
+Small to medium projects.
+Simple routing with few pages.
+You prefer declarative and direct JSX-based definitions.
+When not using dynamic layouts or metadata.
+
+🆚 Comparison Table
+Feature	                        Object-Based (MainRoutes)	    JSX-Based (<Route />)
+Syntax Style	                JavaScript object (tree)	    JSX component tree
+Ideal for	                    Complex, nested apps	        Simpler apps
+Easier to manage large routes?	✅ Yes	                      ❌ Becomes cluttered
+JSX readability	                ❌ Low	                      ✅ High
+Supports dynamic rendering?	    ✅ Easily	                  ✅ But more manual
+Code-splitting support	        ✅ Good with lazy()	          ✅ Good with lazy()
+Nested layouts	                ✅ More organized	          ✅ Supported but can be verbose

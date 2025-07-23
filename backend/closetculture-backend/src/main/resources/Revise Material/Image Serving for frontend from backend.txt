@@ -1,0 +1,167 @@
+
+utils -> Urls_Images.java
+
+    public static Resource getResourceUrl(String whichImages,String collName,Long id,String filename) throws MalformedURLException{
+
+        String location = "src\\main\\resources\\static\\Images\\"+whichImages+"\\"+collName+"\\"+id+"\\"+filename;
+
+        File file = new File(location);
+        
+        if(resource.exists()){
+            Path path = Paths.get(location);
+            return new UrlResource(path.toUri());
+        }else{
+            return null;
+        }
+
+    }
+    
+CollectionStroreController:
+
+    @GetMapping("/get-coll-img/{collId}")
+    @Operation(summary = "Get the Collection Image")
+    public ResponseEntity<?> getCollectionImage(@PathVariable Long collId) throws IOException,MalformedURLException {
+
+        Optional<CollectionStore> optColl = collService.findById(collId);
+        if(!optColl.isPresent()){
+            return ResponseEntity.badRequest().body("No Collection Exists!");
+        }
+
+        CollectionStore coll = optColl.get();
+
+        Resource resourceLink = Urls_Images.getResourceUrl("collection_images",coll.getCollName(), collId,coll.getImg());
+
+        String contentType = Files.probeContentType(resourceLink.getFile().toPath());
+
+        String headerContentDispositionValues = "attachment;filename="+coll.getImg();
+
+        return ResponseEntity.ok()
+                             .contentType(MediaType.parseMedia(contentType))
+                             .header(HttpHeaders.CONTENT_DISPOSITION,headerContentDispositionValues)
+                             .body(resourceLink);
+        }
+
+Faiz Understanding:
+OK!! if we upload the images today and and immediately we run the backend in vs code and get the img ,the path we give here is taken 
+as a valid url and it will give us the images.
+
+but if we close it and open the backend and run tomorrow,these static files get in .jar and when we again get the image,so it does not
+take this path("src\\main\\resources\\static\\Images\\"+whichImages+"\\"+collName+"\\"+id+"\\"+filename) as a valid path and it means/shows 
+the file path  is not exist even if we can see it in the menu bar.
+
+so we make the path as classpath resource and use the path.
+
+Detail understanding:
+
+🧠 1. Why It Works Today (When You Upload + Run Immediately)
+
+When you're running the project in VS Code (Dev mode):
+
+Spring Boot directly accesses files inside:
+src/main/resources/static/
+Because you haven’t created the .jar yet, it uses actual physical folder paths on disk.
+
+So this path works at that moment:
+
+"src/main/resources/static/Images/..."
+✅ That's why uploaded images are found instantly when you test right after uploading.
+
+❌ 2. Why It Fails Tomorrow (or after re-run / packaged .jar)
+
+When you stop and re-run the project later (or build a JAR):
+Spring Boot no longer uses raw disk files from src/main/resources/...
+Instead, it packages everything inside the .jar like this:
+
+closetculture-backend-1.0.0.jar
+  └── static/
+      └── Images/
+          └── ...
+
+Now this path:
+
+"src/main/resources/static/Images/..."
+❌ becomes invalid because there’s no physical folder anymore — the images are inside the jar (like a zip file).
+
+-----------------------------------------------------------------------------------------------------------------------------------
+SOLUTION: Use ClassPathResource
+
+utils -> Urls_Images.java
+
+    public static Resource getResourceUrl(String whichImages,String collName,Long id,String filename) throws MalformedURLException{
+
+        // String location = "src\\main\\resources\\static\\Images\\"+whichImages+"\\"+collName+"\\"+id+"\\"+filename;
+        String location = "static/Images/" + whichImages + "/" + collName + "/" + id + "/" + filename;
+
+        // File file = new File(location);
+
+        ClassPathResource resource = new ClassPathResource(location);
+        
+        if(resource.exists()){
+            return resource;
+            // Path path = Paths.get(location);
+            // return new UrlResource(path.toUri());
+        }else{
+            return null;
+        }
+
+    }
+
+CollectionStroreController:
+    @GetMapping("/get-coll-img/{collId}")
+    @Operation(summary = "Get the Collection Image")
+    public ResponseEntity<?> getCollectionImage(@PathVariable Long collId) throws IOException,MalformedURLException {
+
+        Optional<CollectionStore> optColl = collService.findById(collId);
+        if(!optColl.isPresent()){
+            return ResponseEntity.badRequest().body("No Collection Exists!");
+        }
+
+        CollectionStore coll = optColl.get();
+
+        Resource resourceLink = Urls_Images.getResourceUrl("collection_images",coll.getCollName(), collId,coll.getImg());
+
+        // String contentType = Files.probeContentType(resourceLink.getFile().toPath());
+
+        InputStream inputStream = resourceLink.getInputStream();
+        byte[] bytes = inputStream.readAllBytes();
+
+        String headerContentDispositionValues = "attachment;filename="+coll.getImg();
+
+        return ResponseEntity.ok()
+                             .contentType(MediaType.IMAGE_JPEG)
+                             .header(HttpHeaders.CONTENT_DISPOSITION,headerContentDispositionValues)
+                             .body(bytes);
+        }
+
+
+new ClassPathResource("static/Images/collection_images/Collec1/3/image.jpg");
+
+This looks inside the jar (or folder) like this:
+classpath:/static/Images/collection_images/Collec1/3/image.jpg
+
+It works both:
+🔁 in dev mode
+📦 and after packaging as jar
+
+REAL PROBLEM NOW:
+
+Faiz:
+now i upload one new image and now if i get that image it again says ,null for resource link.i can understand that ClassPathResource look inside 
+the jar file,and the now the image is not inside the jar yet so it gives me null, but how can i resolve it?
+
+✅ THE PROPER SOLUTION: 
+
+Use External "uploads/" Folder (Outside jar)
+You need to separate image uploads from src/main/resources completely.
+
+Instead of saving to:
+src/main/resources/static/Images/...
+⛔ ❌ Don't do this anymore.
+
+✅ Do this instead:
+Create an external directory like:
+
+uploads/collection_images/...
+Anywhere outside your target/ or src/ folder — even at: closetculture-backend/uploads/...
+
+

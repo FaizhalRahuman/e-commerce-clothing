@@ -1,0 +1,102 @@
+
+As We Know That the useEffect( () => {...}) run twice in the React.StrictMode,
+
+DEEPSEEK; useEffect: Actually runs the full effect twice (for side effect detection)
+
+Here's The Proble We Face,let's say if we have inside a component,
+
+useEffect(() => {
+
+            if(!prdId) return;
+
+            console.log(prdId);
+
+            fetchDeleteData(`/product/delete-by-id/${prdId}`)
+                .then( (res) => {
+                    console.log("Successfully Product Deleted:",res.data);
+                    navigate('/admin/home');
+                }).catch( (err) => {
+                    setPrdError("No Product Exists!");
+                    console.log("Error While Deleting Product in ProdDeleteById.js",err.message);
+                })
+
+        },[])
+
+now when the component mounts the useEffect runs and make "delete call",and second useEffect run happens and it again
+make a "delete call" which gives us error ,which it tries to delete the already deleted data in DB and gives us 500
+server error.
+
+This Errors Throwen By Hibernate like this:
+2025-07-17T20:03:25.548+05:30 ERROR 25532 --- [ClosetCulture] [nio-8080-exec-2] o.a.c.c.C.[.[.[/].[dispatcherServlet]:Servlet.service() 
+for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.orm.ObjectOptimisticLockingFailureException:Row 
+was updated or deleted by another transaction (or unsaved-value mapping was incorrect): [com.ecommerce.closetculture.model.adminSide.Product#59]] with root cause
+
+org.hibernate.StaleObjectStateException: Row was updated or deleted by another transaction (or unsaved-value mapping was incorrect): [com.ecommerce.closetculture.model.adminSide.Product#59]
+
+SO TO TACKLE THIS WE MAY THINK LIKE TO GIVE LIKE THIS:
+
+...
+
+const[prdError,setPrdError] = useState('');
+const[deleted,setDeleted] = useState(false);
+
+useEffect(() => {
+
+    if(deleted === false){
+
+            if(!prdId) return;
+
+            console.log(prdId);
+
+            fetchDeleteData(`/product/delete-by-id/${prdId}`)
+                .then( (res) => {
+                    console.log("Successfully Product Deleted:",res.data);
+                    navigate('/admin/home');
+                }).catch( (err) => {
+                    setPrdError("No Product Exists!");
+                    console.log("Error While Deleting Product in ProdDeleteById.js",err.message);
+                })
+        }
+        },[])
+
+Here We think to do like make a "deleted" useState at first it is false ,so it runs the call and we set the state to
+true(deleted) and second time "useEffect" we think that we already make the deleted as true so it won't runs the "delete call".
+
+But Here's the catch;
+    The State is update after all the renders of useEffect(after teice renders),so at the second time also the "deleted" is not yet
+    updated and it agains enter into the block and executes the "delete call".
+
+
+** PROPER SOLUTIONS ** :
+
+@ Make Use of useRef() hook;
+
+Which is not based on renders,so it updates the thing(variable) immediately not wait for full renders of useEffect,
+so at the second time call,the deleted(wasCalled in below code) is setted already as true,so it won't run the "delete call" again
+
+const [prdError, setPrdError] = useState('');
+const wasCalled = useRef(false); // Using ref instead of state
+
+useEffect(() => {
+  if (!wasCalled.current && prdId) {
+    wasCalled.current = true; // This updates immediately
+    console.log(prdId);
+    
+    fetchDeleteData(`/product/delete-by-id/${prdId}`)
+      .then((res) => {
+        console.log("Successfully Product Deleted:", res.data);
+        navigate('/admin/home');
+      })
+      .catch((err) => {
+        setPrdError("No Product Exists!");
+        console.log("Error While Deleting Product in ProdDeleteById.js", err.message);
+      });
+  }
+}, [prdId, navigate]);
+
+----------------------------------
+
+
+
+
+

@@ -1,0 +1,46 @@
+
+🔍 First — What Are the 3 Brackets in JavaScript?
+
+Symbol	    Name	       Example	                Used for
+{}	    Curly braces	{ key: value }	        Objects, destructuring, code blocks, to insert a JavaScript expression or variable inside JSX.
+[]	    Square brackets	[1, 2, 3]	            Arrays, array destructuring
+()	    Round brackets	function() {} or (a+b)	Functions, grouping, if() etc.
+
+💥 Let’s Compare Them with Examples
+
+✅ 1. {} = Curly Braces
+
+Used for:
+Defining an object
+Destructuring
+Code blocks (if, for, function)
+
+const obj = { name: "Faizhal", age: 22 };  // object
+const { name } = obj;                      // destructure
+if (true) { console.log("Yes!"); }         // code block
+
+✅ 2. [] = Square Brackets
+
+Used for:
+Arrays
+Array destructuring
+Access by index
+
+const arr = [10, 20, 30];
+const [a, b] = arr;           // a=10, b=20
+console.log(arr[0]);          // 10
+
+✅ 3. () = Round Brackets
+
+Used for:
+Calling functions
+Function parameters
+Math expressions
+
+function add(a, b) {
+  return a + b;
+}
+
+add(1, 2); // calling → 3
+
+if (isLoggedIn) {  }  // condition → inside ()

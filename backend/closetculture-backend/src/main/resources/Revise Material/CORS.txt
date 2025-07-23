@@ -1,0 +1,26 @@
+
+CORS - Cross Origin Resource Sharing
+
+SITUATION 1:
+
+since we write the WebMvcConfigurer in spriing Security,
+
+    @Bean
+    public WebMvcConfigurer corsConfig(){
+
+        return new WebMvcConfigurer() {
+
+            @Override
+            public void addCorsMappings(CorsRegistry registry){
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedHeaders("*")
+                        .maxAge(3600);
+            }
+        };
+    }
+
+We thinking that the full cors setup is finished,
+But here when insend a request for 'account/register'  -> yeah it works nice!!
+But when i send the a request gor '/auth/login/token'  -> It says like, the request is blocked due to cors policy!
+  -->Here's the thing even though we write the cors setup by webmvConfigurer,it still says CORS Error

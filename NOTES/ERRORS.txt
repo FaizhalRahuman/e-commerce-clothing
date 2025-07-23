@@ -1,0 +1,188 @@
+ERRORS
+
+DB:
+
+ERROR: Failed to configure a DataSource: 'url' attribute is not specified...
+
+
+Spring Boot is built to auto-configure everything for you — so you don’t need to write a lot of boilerplate.
+
+What Happens at Startup:
+Spring sees JPA dependency (like spring-boot-starter-data-jpa)
+
+It thinks: “Oh! You must want to use a database (SQL)!”
+Then it says: “Let me try to auto-configure a DataSource for you...”
+But when it tries to do that — it doesn’t find:
+spring.datasource.url
+spring.datasource.driver-class-name
+etc.
+
+So it throws this error;
+
+It Can't Run Without DB Config
+Because JPA requires a DataSource to even initialize the app context.
+----------------------------------------------------------------------------------------------------------------------------------------------
+ ERROR:
+[You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'order (
+        order_id bigint not null auto_increment,
+        buyer_address' at line 1]
+
+❌ Problem
+You're trying to create a table named order, like this:
+
+create table order ( ... )
+But order is a reserved keyword in MySQL (used in ORDER BY, etc.), so MySQL gets confused.
+
+Solution: you MUST not use a reserved keyword as a table name!
+
+==============================================================================================================================================
+
+HIBERNATE:
+ERROR: TransientObjectException: persistent instance references an unsaved transient instance of 'Order'
+This means:
+
+👉 You’re trying to save an OrderItem object that is referring to an Order which is not saved in DB yet.
+
+Hibernate is shouting:
+
+“How can I insert the foreign key (order_id) in OrderItem if the Order doesn’t exist in the DB yet?? 🤯”
+
+💣 Where the bug is:
+        odrItm.setOrder(order);         // ❌ refers to an Order not yet saved
+        odrItmService.save(odrItm);     // ❌ saving OrderItem too early
+You're saving the OrderItem before saving the Order.
+But OrderItem has a foreign key (order_id) to Order, so Hibernate doesn’t know what to insert.
+
+SOLUTION:
+
+✅ Correct Fix (Save Order First!):
+Just save the Order first, then set that saved order to the OrderItem.
+===============================================================================================================================================
+
+Code:
+
+🔥 Problem You're Facing:
+
+When you call this API:
+
+@GetMapping("/view-by-prdId/{prdId}")
+public ResponseEntity<?> viewCollectionByPrdId(@PathVariable Long prdId) {
+    ...
+    return ResponseEntity.ok(collByProdId);
+}
+You return a list of CollectionStore entities. But CollectionStore → Product → CollectionStore → Product ... creates an infinite loop while converting to JSON, so you get this error: HttpMessageNotWritableException: Document nesting depth (1001) exceeds the maximum allowed
+
+⚠️ Why It Happens
+Because of this bi-directional relationship in your entities:
+
+In Product.java:
+@OneToMany(mappedBy="product", cascade=CascadeType.ALL)
+List<CollectionStore> collections = new ArrayList<>();
+
+In CollectionStore.java:
+@ManyToOne
+@JoinColumn(name = "prd_Id", referencedColumnName="prdId", nullable=false)
+private Product product;
+
+This creates a loop like: CollectionStore → Product → List<CollectionStore> → Product → ...
+
+Solution : 
+Faiz :- I solve this by view the collections through ViewCollectionDTO where there is no product field(actually we don't need to display product as well)
+
+Chat:
+✅ Option 1: Use @JsonBackReference and @JsonManagedReference
+This is the best solution when you want some relationships to be shown but avoid infinite loop.
+
+🔧 In CollectionStore.java:
+@ManyToOne
+@JoinColumn(name = "prd_Id", referencedColumnName = "prdId", nullable=false)
+@com.fasterxml.jackson.annotation.JsonBackReference
+private Product product;
+🔧 In Product.java:
+@OneToMany(mappedBy="product", cascade=CascadeType.ALL)
+@com.fasterxml.jackson.annotation.JsonManagedReference
+List<CollectionStore> collections = new ArrayList<>();
+
+✅ Option 2: Just ignore the reverse field using @JsonIgnore
+If you don’t want to return the full Product inside CollectionStore, this is simpler.
+
+In CollectionStore.java:
+@ManyToOne
+@JoinColumn(name = "prd_Id", referencedColumnName = "prdId", nullable=false)
+@com.fasterxml.jackson.annotation.JsonIgnore
+private Product product;
+That’s it!
+
+=====================================================================================================================================================================================
+
+REACT ERRORS:
+
+1) object is not iterable (cannot read property Symbol(Symbol.iterator))
+
+EG:
+const handleInput = (e) => {
+  const [name, value] = e.target;
+
+....
+}
+
+<TextField name="email" onChange={handleInput} />
+
+Error:
+
+e.target is like:
+
+e.target = {
+  name: "email",
+  value: "faizhal@gmail.com"
+}
+
+const { name, value } = e.target;
+This means: "Give me the name and value properties from the object e.target."
+
+SO the e.target is object literal then how can we destructure as array!! 
+
+Solution:
+Destructure as Object.
+
+2) Objects are not valid as a React child (found: object with keys {message, name, code, config, request, response, status})
+
+This means: You are trying to display an entire JavaScript object directly inside JSX, like:
+
+<p>{someObject}</p>  // ❌ CRASHES!
+React doesn't know how to "render" a whole object — only strings, numbers, JSX, arrays of JSX, etc.
+
+🧠 Real Example (likely in your code):
+
+You probably have something like:
+
+.catch((error) => {
+  setError(error); // ❌ error is a full object
+})
+
+Then in your JSX:
+<p>{error}</p>  // ❌ Will throw this exact error
+
+✅ Fix Options
+
+✅ Option 1: Show a specific field (like .message)
+<p>{error.message}</p>
+✅ This works because error.message is a string (e.g., "Request failed with status code 404")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

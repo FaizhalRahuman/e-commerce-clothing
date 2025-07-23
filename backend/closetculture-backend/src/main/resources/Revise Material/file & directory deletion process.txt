@@ -1,0 +1,113 @@
+
+To delete the file which is inside a folder,like
+
+eg: 
+
+closetculture-backend/
+└── uploads/
+    └── Images/
+        └── stock_images/
+            ├── baggy pants/
+            │   ├── 17/
+            │   │   └── b8767f23-xxx.jpg
+            │   └── 20/
+            │       └── 9d345abc-yyy.png
+            └── oversized hoodie/
+                └── 25/
+                    └── e56aad99-zzz.jpg
+
+Here, our goal is that if i delete the stock then the images in our server also got to be deleted right!!
+
+and then if we also have to delete the stkId folder also,if there is no image inside it and another thing is that
+
+we also have to delete the collection name(baggy pants/) folder also if it is empty(no stock images/stkId folder is there)
+
+like that we have to delete the folders hich is empty?
+
+to do this we do a code like below,
+
+Files.walk(imgDeletePath)                      // 1. Open the pizza box
+
+     .sorted(Comparator.reverseOrder())        // 2. Take out slices from top to bottom
+
+     .forEach(path -> {                        // 3. Eat each slice (delete each file)
+
+         try {
+             Files.delete(path);               // delete operation
+         } catch (IOException e) {
+             e.printStackTrace();              // Spit out bad slices (error handling)
+         }
+     });
+
+EXPLANATION:-
+
+How Files.walk() Works :-
+
+suppose if our folder structure is like this,
+example/
+├── file1.txt
+├── subfolder/
+│   ├── file2.txt
+│   └── file3.txt
+└── file4.txt
+
+and if we give,
+Path root = Paths.get("example");
+Files.walk(root).forEach(System.out::println);
+
+It would output paths in this order:
+example/
+example/file1.txt
+example/subfolder/
+example/subfolder/file2.txt
+example/subfolder/file3.txt
+example/file4.txt
+
+Files.walk(root) ---> it returns a Stream<Path> - a lazy stream of Path objects ,stream representing all files and directories under the given root path.
+
+The Problem With Natural Order --- >(appidiye andha stream la iruka order laiye delete panite vandhomna)
+
+If we try to delete in this order:
+
+Try to delete example/ first → "FAILS" (because it is not empty)
+
+Because:
+Single File → Files.delete() works fine
+Empty Directory → Files.delete() works fine
+Directory with Contents → NOT WORKS Buddy!!
+
+so what we do,
+
+Comparator.reverseOrder() Fixes This :- 
+
+When we add .sorted(Comparator.reverseOrder()) ,it sorts that stream in a reverse order.
+
+Original order	                 Reversed order
+example/	                    example/file4.txt
+example/file1.txt	            example/subfolder/file3.txt
+example/subfolder/	            example/subfolder/file2.txt
+example/subfolder/file2.txt	    example/subfolder/
+example/subfolder/file3.txt	    example/file1.txt
+example/file4.txt	            example/
+
+Now deletion happens in this logical sequence:
+
+example/file4.txt (file)
+
+example/subfolder/file3.txt (deepest file)
+
+example/subfolder/file2.txt (next file)
+
+example/subfolder/ (now empty directory)
+
+example/file1.txt (file)
+
+example/ (now empty directory)
+
+
+
+
+
+
+
+

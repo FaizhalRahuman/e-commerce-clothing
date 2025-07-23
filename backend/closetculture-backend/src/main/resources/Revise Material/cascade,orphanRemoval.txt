@@ -1,0 +1,51 @@
+
+ To automatically delete all CollectionStore entries when a Product is deleted, you need to configure cascade and orphan removal in your JPA relationship.
+
+cascade = cascadeType.ALL --->	All operations (persist, merge, remove, etc.) are cascaded to children.
+
+--> It means that if i did any changes in "Product",then the children which are related to this "Product" are also gets changes.
+
+    @OneToMany(mappedBy="product", cascade=CascadeType.ALL) --> we have to give this cascade in parent table/entity("Product")
+    List<CollectionStore> collections = new ArrayList<>();
+
+
+POINT 1:
+
+When we mark the Parent Class with Child Class as cascade ,
+        And if we do any changes directly on the child -> Hibernate will make the  changes normally
+        BUT When I try to DELETE the child directly which is attached/connected(cascade) with parent --> Hibernate won't delete the child.
+
+    Here's WHY?
+
+    public class Account{
+
+        ...
+
+        @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+        List<OrderItem> cart = new ArrayList<>();
+
+        ...
+    }
+
+    If We DO LIKE : odrItmService.deleteById(odrItm.getOrderItmId()); in someWhere
+    
+    You are NOT modifying Account at all.
+    You are doing: odrItmService.deleteById(odrItm.getOrderItmId());
+That means:
+👉 You're asking Hibernate to delete the child directly,
+👉 BUT Hibernate sees it's still inside the parent list (acc.getCart()),
+So it thinks:
+
+“Why is he trying to delete something that's still attached to the parent? 🤔 I’ll ignore this to avoid breaking consistency.”
+
+⚠ So, Hibernate is confused between:
+
+You deleting the child manually, AND
+You still holding it in the parent list (like you're trying to keep it).
+
+✅ Solution (Always works):
+You MUST remove the child from the parent list too:
+
+acc.getCart().remove(odrItm); // 🟢 remove from list  ---->  we remove that particular item from being attached to the parent(Account) 
+odrItmService.deleteById(odrItm.getOrderItmId()); // 🟢 now delete
+        

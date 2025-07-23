@@ -1,0 +1,38 @@
+H2 DB Configuration:
+
+DB Config:
+
+1. DB url -> file create/give url
+2. DriverClass -> H2 JDBC driver
+3. Dialect -> H2 Dialect
+4. Username -> *
+5. Password -> *
+
+DB Console:
+
+1. Enable Console -> true/false
+2. Console url -> *
+3. allowing on other devices(web allow others) -> true/false
+
+DB StartUp Configuration:
+
+1. DDL auto(Data Definition Language auto) -> Create-drop,update,...
+
+-------------------------------------
+#h2:db settings
+spring.datasource.url=jdbc:h2:file:./db/restdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=vino
+spring.datasource.password=vino
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+(or)
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+
+
+#db-console
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2console
+spring.h2.console.settings.web-allow-others=false
+
+#local h2 table setup on startup
+spring.jpa.hibernate.ddl-auto=create-drop

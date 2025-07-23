@@ -1,0 +1,57 @@
+
+Instead of using navigate(...?id=..&imgFile=...), use the state object in React Router’s navigate() function.
+
+✅ This way, imgFile (a File object) is safely passed via memory, not URL.
+
+In navigating place:
+
+navigate(`/admin${activeOperation.Url}?id=${uploadImg.id}`, {
+  state: { imgFile: uploadImg.imgFile }
+});
+
+In Getting the image sended through url place:
+
+const { state } = useLocation();
+const collImg = state?.imgFile;
+
+or
+
+const location = useLocation();
+const collImg = location.state?.imgFile;
+
+and use the image asusual,
+
+const formData = new FormData();
+    formData.append("file",collImg);
+
+    fetchPostImgWithToken(`/collection/upload-coll-img/${collId}`,formData)
+    ...
+
+
+✅ When you use the state parameter in React Router like this:
+
+navigate('/some-page', {
+  state: { myData: something }
+});
+👉 it stores the data temporarily in memory — not in the URL, not in localStorage, and not in cookies.
+
+🔍 Where is it stored?
+
+It's stored in the browser's navigation history stack, like:
+history.push({ pathname: '/next', state: { yourData } })
+It’s like a temporary bag that goes along with the route.
+Only available until page reload or refresh — it’s not persisted.
+
+
+📦 Use-case Examples:
+
+✅ Great for passing:
+File objects (like in your image upload)
+Sensitive info you don’t want in the URL
+Big data like arrays, objects for next screen use
+
+❌ Not good for:
+
+Data you want to access after a page refresh
+Long-term storage (use localStorage or backend instea
+

@@ -1,0 +1,192 @@
+
+Mouse Event Variants in React/HTML
+Here's a comprehensive list of mouse-related events in React/HTML, categorized for easy understanding:
+
+Basic Mouse Events
+onClick
+
+Triggered when mouse is pressed and released on same element
+
+React: onClick
+
+HTML: click
+
+onDoubleClick
+
+Double mouse click
+
+React: onDoubleClick
+
+HTML: dblclick
+
+onContextMenu
+
+Right-click to open context menu
+
+React: onContextMenu
+
+HTML: contextmenu
+
+Mouse Movement Events
+onMouseEnter
+
+Mouse enters element boundary
+
+React: onMouseEnter
+
+HTML: mouseenter
+
+onMouseLeave
+
+Mouse leaves element boundary
+
+React: onMouseLeave
+
+HTML: mouseleave
+
+onMouseOver
+
+Mouse enters element or its children (bubbles)
+
+React: onMouseOver
+
+HTML: mouseover
+
+onMouseOut
+
+Mouse leaves element or its children (bubbles)
+
+React: onMouseOut
+
+HTML: mouseout
+
+onMouseMove
+
+Mouse moves while over element
+
+React: onMouseMove
+
+HTML: mousemove
+
+Mouse Button Events
+onMouseDown
+
+Mouse button is pressed down
+
+React: onMouseDown
+
+HTML: mousedown
+
+onMouseUp
+
+Mouse button is released
+
+React: onMouseUp
+
+HTML: mouseup
+
+Drag & Drop Events
+onDrag
+
+Element is being dragged
+
+React: onDrag
+
+HTML: drag
+
+onDragStart
+
+Dragging begins
+
+React: onDragStart
+
+HTML: dragstart
+
+onDragEnd
+
+Dragging ends
+
+React: onDragEnd
+
+HTML: dragend
+
+onDragEnter
+
+Dragged item enters valid drop target
+
+React: onDragEnter
+
+HTML: dragenter
+
+onDragLeave
+
+Dragged item leaves valid drop target
+
+React: onDragLeave
+
+HTML: dragleave
+
+onDragOver
+
+Dragged item is over drop target
+
+React: onDragOver
+
+HTML: dragover
+
+onDrop
+
+Item is dropped on target
+
+React: onDrop
+
+HTML: drop
+
+Wheel Events
+onWheel
+
+Mouse wheel is rotated
+
+React: onWheel
+
+HTML: wheel
+
+Special Cases
+onChange
+
+Not strictly a mouse event, but often triggered by mouse
+
+Used for form inputs, selects, etc.
+
+React: onChange
+
+HTML: change
+
+onSelect
+
+Text is selected (can happen via mouse)
+
+React: onSelect
+
+HTML: select
+
+Key Differences: React vs HTML
+Naming:
+
+React: onClick
+
+HTML: onclick
+
+Event Object:
+
+React: Synthetic event (normalized across browsers)
+
+HTML: Native browser event
+
+Event Handling:
+
+React: Uses camelCase
+
+HTML: Uses lowercase
+
+Example Usage in Reac

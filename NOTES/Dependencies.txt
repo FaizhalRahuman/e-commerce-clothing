@@ -1,0 +1,143 @@
+Lombok -> gives Setter,getter ... like boiler plate codes
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+============================================================================================================================================================
+
+Spring:
+
+spring security --> make our site very much secured,that default login page also done by this.webconfing la allow panalana ulla vidaama irukathum ithu thaan panuthu
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+oauth2resourceServer --> we make use it, to tell spring that authentication is based on jwt token.
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
+
+
+Spring Data Jpa --> it just have a set of rules/format like things which we used in hibernate to talk to database,it help us to map the java objects to the relational database.
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+spring web --> MVC support -> routing throught our http methods,annotation like @Controller,@RestController,.... 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+==============================================================================================================================================================
+
+MySQL:
+
+mysql-connector-j --> connector driver dependency(if we use MySQL driver class)
+==============================================================================================================================================================
+
+swagger:
+
+----- Integrating swagger with our springboot app -----------------
+
+Comparing the Two Dependencies:
+
+✅ 1. springdoc-openapi-starter-webmvc-ui (Version 2.2.0)
+<dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>2.2.0</version>
+</dependency>
+
+*This is a modern, Spring Boot-native integration for Swagger/OpenAPI 3.Provided by the springdoc-openapi project.
+*It automatically integrates with Spring MVC (@RestController, @GetMapping, etc.).
+*Adds the Swagger UI page at /swagger-ui/index.html.
+*You don’t see "swagger" in the name because it's using the OpenAPI 3 standard, the evolution of Swagger 2.0.
+*It internally uses parts of Swagger/OpenAPI but hides the complexity from you.
+*Recommended for Spring Boot 2.x+ and 3.x.
+
+⚠️ 2. io.swagger:swagger-core (Version 1.6.16)
+<dependency>
+    <groupId>io.swagger</groupId>
+    <artifactId>swagger-core</artifactId>
+    <version>1.6.16</version>
+</dependency>
+
+*This is a low-level core library from the original Swagger 2.x stack.
+*Does not integrate automatically with Spring Boot.
+*You would have to do manual configuration, custom annotations, and integrate Swagger UI separately.
+*Mostly used in non-Spring apps or for custom Swagger implementations.
+*Not recommended anymore for Spring Boot apps — especially with newer OpenAPI 3 tooling available.
+
+-------- swagger annotations --------------------------------------
+
+✅ 1. Old (Swagger 2.x):
+
+<dependency>
+    <groupId>io.swagger</groupId>
+    <artifactId>swagger-annotations</artifactId>
+    <version>1.6.16</version>
+</dependency>
+From: io.swagger
+Swagger Version: 2.x
+
+Main Annotations:
+@Api
+@ApiOperation
+@ApiParam
+@ApiModel, @ApiModelProperty
+
+Used With:springfox-swagger2
+springfox-swagger-ui
+Status: Legacy, not compatible with Spring Boot 3+
+
+✅ 2. New (OpenAPI 3.x / Spring Boot 3+):
+
+<dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-annotations</artifactId>
+    <version>2.x.x</version>
+</dependency>
+
+From: io.swagger.core.v3
+OpenAPI Version: 3.x
+
+Main Annotations:
+@Operation
+@Parameter
+@Schema
+@Tag
+
+Used With:springdoc-openapi
+Native Spring Boot 3+ Swagger setup
+Status: Current and recommended
+==============================================================================================================================================================
+
+nimbusds:
+
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>10.3</version>
+		</dependency>
+
+we have to put this dependency in order to work with the key sets
+
+================================================================================================================================================================
+
+Random String Utils: used to generate random string.
+
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+    <version>3.12.0</version> <!-- or latest -->
+</dependency>
+
+================================================================================================================================================================
+
+
+

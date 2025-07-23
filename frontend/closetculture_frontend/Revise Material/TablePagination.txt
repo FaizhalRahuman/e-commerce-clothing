@@ -1,0 +1,52 @@
+
+** Understanding MUI Table Pagination:
+
+1. handleChangePage Magic Trick 🎩✨
+
+const handleChangePage = (event, newPage) => {
+  setPage(newPage); 
+};
+
+Why It Works Without Passing Args:
+
+Invisible Handshake 🤝:
+MUI's TablePagination component automatically passes two arguments when it calls this function:
+event: The click event (you can ignore it if not needed)
+newPage: The page number you're switching to
+
+When you click "next page", MUI sends the new page number as the second argument,even if you didn't use the first argument you have to give it,
+or else it always takes the one argument you gave as the first argument kanaku which is event object.
+
+Like a Vending Machine 🥤:
+// MUI does this internally:
+handleChangePage(automaticallyGeneratedEvent, clickedPageNumber);
+
+Brain Stamp 🏷️:
+"It's like your friend handing you a drink - you didn't ask for it, but they automatically give it when you're thirsty!"
+
+2. setRowsPerPage Decoded 🔢➡️🔟
+
+const handleChangeRowsPerPage = (event) => {
+  setRowsPerPage(parseInt(event.target.value, 10));
+  setPage(0); // Reset to first page
+};
+
+Breakdown:
+event.target.value:
+
+Comes from the dropdown <select>
+
+Example: If you pick "25 rows", value is "25" (as string)
+
+parseInt(string, 10):
+Converts string "25" → number 25
+10 means "use decimal system" (always use this)
+
+Why reset to page 0?:
+If you were on page 5 of 10-per-page, switching to 25-per-page might make page 5 invalid
+Like starting a new notebook 📒 - go back to first page!
+
+----> [You click page 3] → [MUI whispers (event, 3) to handler] → [page=3]
+----> [You select "25"] → [Dropdown gives "25" as string] 
+      → [parseInt makes it number 25] 
+      → [Rows updated, back to page 1]

@@ -1,0 +1,164 @@
+
+ERROR:
+
+Uncaught runtime errors:
+×
+ERROR
+There was an error during concurrent rendering but React was able to recover by instead synchronously rendering the entire root.
+    at throwException (http://localhost:3000/static/js/bundle.js:7568:44)
+    at throwAndUnwindWorkLoop (http://localhost:3000/static/js/bundle.js:10386:11)
+    at renderRootSync (http://localhost:3000/static/js/bundle.js:10224:133)
+    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:9967:74)
+    at performWorkOnRootViaSchedulerTask (http://localhost:3000/static/js/bundle.js:10947:5)
+    at MessagePort.performWorkUntilDeadline (http://localhost:3000/static/js/bundle.js:29459:46)
+
+
+Faiz Undertanding:
+
+lets say we have this code:
+
+useEffect(() => {
+    if (!prdId || deleted) return;
+
+    const deleteProduct = async () => {
+        try {
+            const res = await fetchDeleteData(`/product/delete-by-id/${prdId}`);
+            console.log("Successfully Product Deleted:", res.data);
+            setDeleted(true);
+            navigate('/admin/home');
+
+        } catch (err) {
+            
+            setPrdError(err.response?.data || "Unexpected Error");
+            console.error("Error While Deleting Product in ProdDeleteById.js", err.message);
+        }
+    };
+
+    deleteProduct();
+
+}, [prdId, deleted]);
+
+Now Undertand one thing, 
+        when React renders a component,React will stop the current render in a mid-way(pathilaiye) someTimes and start a fresh render again.
+
+Now in this situation,if the react stops the first render it made and starts a new render the firs rendered useeffect() or functions() are still
+running in the background, so in this place,
+const deleteProduct = async () => {
+        try {
+            const res = await fetchDeleteData(`/product/delete-by-id/${prdId}`);
+            console.log("Successfully Product Deleted:", res.data);
+            setDeleted(true);
+            navigate('/admin/home');
+
+        } catch (err) {
+            
+            setPrdError(err.response?.data || "Unexpected Error");
+            console.error("Error While Deleting Product in ProdDeleteById.js", err.message);
+        }
+    };
+
+if it stops the first render and then start a new render ,but this delete product still running in background and after the api call finishes,it 
+does move to the setDelete() and navigate() ,when this setDelete() and navigate() happens ,React gets confused,it'll be like:"hey!! i already unmount
+or stpo that render(component) but why you try to setDelete(setState like thing)/navigate(),i'm currently on this new render,here only that should be happened
+in this component!!! why it happening in unmounted component"--> it gets confused and throw this error -->There was an error during concurrent rendering but React was able to recover by instead synchronously rendering the entire root.
+
+So,we fix it by using some logic(we can say "ignore" logic)
+
+let ignore = false;
+
+useEffect(() => {
+  if (!prdId || deleted) return;
+
+  const deleteProduct = async () => {
+    const res = await fetchDeleteData(...); // ⏳ async
+    if (!ignore) {
+      setDeleted(true);
+      navigate('/admin/home');
+    }
+  };
+
+  deleteProduct(); // 🔄 Async call starts...
+
+  return () => {
+    ignore = true; // 🛑 Cleanup — mark as invalid
+  };
+}, [prdId, deleted]);
+
+Here, we mark ignore as false and and also say that this setDeleted(true); , navigate('/admin/home'); happens only if the ignore is false,so asusual the deleteProduct()
+func is called and api call is go and if the react unmount or stop this component,
+This,
+  return () => {
+    ignore = true; // 🛑 Cleanup — mark as invalid
+  };
+
+happens(it happens when the component gets unmount/reRender remember it).So now our problem is cleared,if react unmount the first render then this "return" called and
+we make the ignore as false inside it and after react drops and rerender the component fresh and even the function is running on background,it won't get into the 
+setDeleted(true); ,navigate('/admin/home'); because it only runs if ignore is false but we made the ognore as true when component unmount,so this setState thing and 
+navigate didn't get executed and the problem won't happens(React won't get confused)->DOESNOT THROW ERROR.
+
+DETAILED EXPLANATION:
+CHAT:
+
+❓ PROBLEM: Why error without ignore, but works with ignore?
+
+⚡ Direct Answer:
+When React renders a component, it may start rendering it, but cancel it midway (like during transitions or strict mode).
+But your useEffect still tries to update state (setDeleted, setPrdError) even though that render was cancelled.
+➡️ This causes errors like:
+“Concurrent rendering error but React recovered...”
+
+🔥 Reason ignore = true works:
+
+You are using:
+
+return () => {
+  ignore = true;
+};
+
+That’s a cleanup function in useEffect.
+React calls this cleanup if the effect is about to re-run or the component unmounts.
+when useEffect is about to re-run again due to dependency change
+
+So:
+If ignore = true, it means “don’t call setState now, this render is no longer active.”
+
+✅ So even if React cancels that render midway, your async function will not do setDeleted() or navigate() or setPrdError().
+No state update → No error.
+
+
+✅ So When Should You Use ignore?
+Let’s list the places where ignore is important, based on real cases:
+
+| ❓Situation                                                         | ⚠️ Risk of Cancelled Render | 💡 Use `ignore`? |
+| ------------------------------------------------------------------ | --------------------------- | ---------------- |
+| Calling API, then using `setState()` inside `useEffect`            | ✅ Yes                       | ✅ Yes            |
+| Calling API, then using `navigate()` inside `useEffect`            | ✅ Yes                       | ✅ Yes            |
+| Simple fetch, then only logging or storing in local variable       | ❌ No                        | ❌ Not needed     |
+| API response updates **props or causes rerender**                  | ✅ Yes                       | ✅ Yes            |
+| Component is fast-changing (e.g. due to route, form input, toggle) | ✅ Yes                       | ✅ Yes            |
+| Long-running API (`await` time is > 1s)                            | ✅ Yes                       | ✅ Yes            |
+
+
+💎 Golden Rule To Remember
+❗️If your useEffect has await / async work, always add a cleanup (like ignore) to avoid updates on unmounted components.
+
+🔍 1. 🔄 React Can Unmount a Component at Any Time When:
+React may unmount your component in several cases — not because of setState, but because you (or React Router) caused the component to leave the screen.
+ ---> Navigation like things.
+-----------------------------------------------------------------------
+❗ When would ignore logic  be needed?
+
+pending:::::::::::
+
+Only when:
+You have long async chains (await, .then() with delays).
+
+You're dong setState(...) inside those.
+
+You want to prevent memory leaks or warnings like: "Can't perform a React state update on an unmounted component"
+
+If We didn't use setState(...) inside those (await, .then() with delays)
+
+we can simply use  ----- > useRef();
+
+Which can handle the Multiple Deletion Error Occured and this cuncurrent rendr also.
