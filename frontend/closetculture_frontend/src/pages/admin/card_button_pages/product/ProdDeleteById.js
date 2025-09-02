@@ -55,7 +55,7 @@ useEffect(() => {
                 // setDeleted(true);
             // };
 
-        },[])
+        },[navigate,prdId]) //--- navigate,
   /*if (!prdId || deleted) return;
 
   const deleteProduct = async () => {

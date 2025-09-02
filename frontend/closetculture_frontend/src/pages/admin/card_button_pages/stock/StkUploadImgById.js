@@ -27,7 +27,7 @@ const StkUploadImgById = () => {
     .then( (res) => {
         console.log(`Successfully Image Uploaded For a Stock! for id:${stkId}`,res.data);
         navigate('/admin/home')
-        // setUploadSuccess("Upload Success !")
+        setUploadSuccess("Upload Success !") //--- comment to uncomment
     }).catch((err)=>{
         console.log("Error while uploading image for a Stock in StkUploadImgById.js",err.response.data);
         setUploadError(err.response.data);

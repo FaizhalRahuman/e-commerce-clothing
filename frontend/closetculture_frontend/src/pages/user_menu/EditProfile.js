@@ -38,7 +38,7 @@ useEffect( () => {
     } 
     getUserDetails();
 
-  },[])
+  },[navigate]) //--- navigate
 
   const updAcc = async() => {
 

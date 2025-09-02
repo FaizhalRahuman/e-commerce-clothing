@@ -67,7 +67,7 @@ const StkViewByCollId = () => {
                 GetStockImg(stk.stkId);
             }
         }
-    },[collStocks]);
+    },[collStocks,imgLink]); //--- imgLink
 
 /* OR WE CAN DO LIKE THIS WITH THE USE OF Promise.all()
 

@@ -95,7 +95,7 @@ Example: [...new Set(["S", "M", "S", "L"])] becomes ["S", "M", "L"]
             }
         }
 
-    },[userSelectedStk])
+    },[userSelectedStk,allStkDetails,stkImages]) //---allStkDetails,stkImages
 
     /*Pace Order In Dialog Box */
     const handlePlaceOrder = async(e) => {

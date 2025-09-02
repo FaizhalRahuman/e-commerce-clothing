@@ -71,7 +71,7 @@ const AccountInfo = () => {
         } 
         getCartDetails()
 
-    },[])
+    },[navigate]) //--- navigate
 
     useEffect( () => {
 
@@ -81,7 +81,7 @@ const AccountInfo = () => {
             }
         }
 
-    },[cartDetails])
+    },[cartDetails,imgLink]) //--- imgLink
 
     console.log("AccountIfo");
 

@@ -25,7 +25,7 @@ const ProdUpdById = () => {
         setGetProductError('');
         setUpdPrdSuccess('');
         setUpdPrdError('');
-    },[])
+    },[prdId]) //--- prdId
 
     useEffect( () => {
 

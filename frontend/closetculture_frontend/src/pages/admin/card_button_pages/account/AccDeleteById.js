@@ -45,7 +45,7 @@ const AccDeleteById = () => {
                     console.log("Error While Deleting Account in AccDeleteById.js",err.message);
                 })
         }
-    },[])
+    },[accId,navigate]) //--- accId,navigate
     
 
     return(

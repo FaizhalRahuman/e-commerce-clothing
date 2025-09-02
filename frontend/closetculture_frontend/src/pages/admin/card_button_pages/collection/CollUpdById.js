@@ -25,7 +25,7 @@ const CollUpdById = () => {
         setGetCollectionError('');
         setUpdCollSuccess('');
         setUpdCollError('');
-    },[])
+    },[collId]) //--- collId
 
     useEffect( () => {
 

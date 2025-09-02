@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useState,useEffect } from "react";
 import {Buffer} from 'buffer';
 
@@ -14,7 +14,7 @@ import Footer from "../../component/layout/Footer";
 
 const CollByprod = () =>{
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [searchParams,setSearchParams] = useSearchParams();
 
@@ -30,12 +30,12 @@ const CollByprod = () =>{
     const [imgLink,setImgLink] = useState({});
     const [prodError,setProdError] = useState('');
 
-    {/*Variable/useStates For Pagination*/}
+    /*Variable/useStates For Pagination*/
     const [pageNo,setPageNo] = useState(searchParams.get("pageNo") ||  0);
     const [collPerPage,setCollPerPage] = useState(searchParams.get("collPerPage") || 8);
     const [totColl,setTotColl] = useState(null);
 
-    {/*Variables/useStates for filtering*/}
+    /*Variables/useStates for filtering*/
     const [size,setSize] = useState(searchParams.get("size") || '');
     const [color,setColor] = useState(searchParams.get("color") || '');
     const [priceRange,setPriceRange] = useState([searchParams.get("minprice") || 0,searchParams.get("maxprice") || 9999]);
@@ -100,7 +100,7 @@ const CollByprod = () =>{
       getCollections();
     }
 
-  },[prdId,pageNo,collPerPage,size,color,priceRange])
+  },[prdId,pageNo,collPerPage,size,color,priceRange,prdName,setSearchParams]) //--- prdName,setSearchParams
 
 
     
@@ -154,7 +154,7 @@ useEffect( () => {
           GetCollectionImg(collection.collId);
       }
     }
-},[prdCollections]);
+},[prdCollections,imgLink]); //--- imgLink
     
     /* OR WE CAN DO LIKE THIS WITH THE USE OF Promise.all()
     

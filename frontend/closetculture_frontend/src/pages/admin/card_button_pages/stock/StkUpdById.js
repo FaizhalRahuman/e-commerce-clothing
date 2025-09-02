@@ -25,7 +25,7 @@ const StkUpdById = () => {
         setGetStockError('');
         setUpdStkSuccess('');
         setUpdStkError('');
-    },[])
+    },[stkId])
 
     useEffect( () => {
 

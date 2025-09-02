@@ -83,7 +83,7 @@ const AdminHome = () => {
       navigate('/account/login');
     }
     setActiveOperation(null);
-  },[]);
+  },[navigate]); //--- navigate
 
   //----- Handling Button Click After Entering Id / Uploading images ------------------------------------------------------------------------------
 

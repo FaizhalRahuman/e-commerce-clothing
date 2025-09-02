@@ -43,26 +43,6 @@ const ViewCart = () => {
         }
     }
 
-    const getStockAvl = async(stkId) => {
-
-        try{
-            const res = await fetchGetDataWithToken(`/stock/view-by-stkId/${stkId}`);
-            const data = res.data;
-            console.log("Stock Item for stock id :"+stkId,data);
-            console.log("Stock comes from:",data.stock);
-            setStockAvl( (prevVal) => ({
-                ...prevVal,
-                [stkId]:data.stock
-            }));
-            console.log( "inside get func id: ",stkId);
-            console.log( "inside get func object : ",stockAvl);
-
-
-        }catch(err){
-            console.log("Error while getting stock by stkId in ViewCart.js",err.message);
-        }
-    }
-
     useEffect( () => {
 
         if(!localStorage.getItem("token")){
@@ -84,9 +64,29 @@ const ViewCart = () => {
         getCartDetails()
         setIsChanged(false);
 
-    },[isChanged])
+    },[isChanged,navigate]) //--- navigate
 
     useEffect( () => {
+
+        const getStockAvl = async(stkId) => { //--- moved from outside to inside this useEffect
+
+        try{
+            const res = await fetchGetDataWithToken(`/stock/view-by-stkId/${stkId}`);
+            const data = res.data;
+            console.log("Stock Item for stock id :"+stkId,data);
+            console.log("Stock comes from:",data.stock);
+            setStockAvl( (prevVal) => ({
+                ...prevVal,
+                [stkId]:data.stock
+            }));
+            console.log( "inside get func id: ",stkId);
+            console.log( "inside get func object : ",stockAvl);
+
+
+        }catch(err){
+            console.log("Error while getting stock by stkId in ViewCart.js",err.message);
+        }
+    }
 
         let tot = 0;
 
@@ -101,7 +101,7 @@ const ViewCart = () => {
         }
         setTotalPrice(tot);
 
-    },[cartDetails])
+    },[cartDetails,imgLink,stockAvl]) //--- imgLink,stockAvl
 
     console.log("KEY AND VALUE:",stockAvl);
 

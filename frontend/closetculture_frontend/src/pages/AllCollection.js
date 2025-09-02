@@ -3,7 +3,7 @@ import {useState,useEffect} from 'react';
 import fetchGetData, { fetchGetDataWithArrayBuffer } from '../client/client';
 
 import CollectionCardTemplate from '../component/cards/CollectionCard';
-import {Box,Card,CardMedia,Grid, TablePagination, Typography } from '@mui/material';
+import {Box,Card,CardMedia,Grid, TablePagination} from '@mui/material';
 
 import { Buffer } from 'buffer';
 import Header from '../component/layout/Header';
@@ -99,7 +99,7 @@ const AllCollections = () => {
       }
       getCollections();
 
-    },[pageNo,collPerPage,size,color,priceRange])
+    },[pageNo,collPerPage,size,color,priceRange,setSearchParams,totColl]) //--- setSearchParams,totColl
 
     //----- Getting Image -----------------------------------------------------------------------------------------------------
     const GetCollectionImg = async(collId) => {

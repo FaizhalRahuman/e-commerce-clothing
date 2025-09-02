@@ -83,7 +83,7 @@ const StkByColl = () => {
       }
     };
     CollStocks();
-  }, [collId]);
+  }, [collId,navigate]); //--- navigate
 
   useEffect(() => {
     for (var stk of collStocks) {
@@ -91,7 +91,7 @@ const StkByColl = () => {
         GetStockImg(stk.stkId);
       }
     }
-  }, [collStocks]);
+  }, [collStocks,imgLink]); //--- imgLink
 
   const handleAddToCart = async(stkId) => {
     console.log("Enter CART Adding func ............................")

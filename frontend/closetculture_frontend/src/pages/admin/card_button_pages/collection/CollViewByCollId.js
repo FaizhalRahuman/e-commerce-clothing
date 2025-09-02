@@ -7,7 +7,7 @@ import { fetchGetDataWithToken, fetchGetDataWithArrayBufferWithToken } from "../
 import { Typography, Box,Grid } from "@mui/material";
 
 import Header from "../../../../component/layout/Header";
-import { Collections } from "@mui/icons-material";
+// import { Collections } from "@mui/icons-material";
 
 const CollViewByCollId = () => {
 

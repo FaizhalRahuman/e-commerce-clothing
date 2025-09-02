@@ -1,7 +1,7 @@
 import {useLocation, useNavigate} from 'react-router-dom'
 
 import {fetchDeleteDataWithToken} from '../../../../client/client'
-import { use, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Box } from '@mui/material';
 
@@ -38,7 +38,7 @@ const CollDeleteById = () => {
             })
 
         }
-    },[])
+    },[collId,navigate]) //--- collId,navigate
 
     return(
         <>

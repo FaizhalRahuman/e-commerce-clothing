@@ -37,7 +37,7 @@ const StkDeleteById = () => {
 
         }
 
-    },[])
+    },[navigate,stkId]) //--- navigate,stkId
 
     return(
         <>
