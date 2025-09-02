@@ -1,0 +1,9 @@
+services:
+  - name: closetculture-backend
+    path: backend/closetculture-backend
+    dockerfilePath: Dockerfile
+    build:
+      context: .
+    run:
+      command: java -jar target/ClosetCulture-0.0.1-SNAPSHOT.jar
+      port: 8080
