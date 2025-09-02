@@ -23,7 +23,7 @@ public class Urls_Images {
 
     public static Resource getResourceUrl(String whichImages,String collName,Long id,String filename) throws MalformedURLException{
 
-        String location = Paths.get("e-commerce-clothing.up.railway.app","closetculture-backend","uploads", "Images",
+        String location = Paths.get("closetculture-backend","uploads", "Images",
                             whichImages, collName, String.valueOf(id), filename)
                        .toString();
         System.out.println("Looking for file at: " + location);
