@@ -105,7 +105,7 @@ public class WebSecurityConfig {
                         "/product/view-all").permitAll()
 
                 .requestMatchers("/account/view-by-id/{accId}",
-                "/collection/view-by-prdId/**","collection/view-by-collId/**","/collection/filter-pagination-prod/**",
+                "/collection/view-by-prdId/**","/collection/view-by-collId/**","/collection/filter-pagination-prod/**",
                  "/stock/view-all","/stock/view-by-collId/**", "/stock/get-stock-img/**","/stock/view-by-stkId/**").hasAnyAuthority("SCOPE_USER","SCOPE_ADMIN")
 
                 .requestMatchers("/product/**", "/collection/**", "/stock/**", 
