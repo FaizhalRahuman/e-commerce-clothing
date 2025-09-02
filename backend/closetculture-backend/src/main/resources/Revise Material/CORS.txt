@@ -21,6 +21,6 @@ since we write the WebMvcConfigurer in spriing Security,
     }
 
 We thinking that the full cors setup is finished,
-But here when insend a request for 'account/register'  -> yeah it works nice!!
-But when i send the a request gor '/auth/login/token'  -> It says like, the request is blocked due to cors policy!
+But here when i send a request for 'account/register'  -> yeah it works nice!!
+But when i send the a request for '/auth/login/token'  -> It says like, the request is blocked due to cors policy!
   -->Here's the thing even though we write the cors setup by webmvConfigurer,it still says CORS Error

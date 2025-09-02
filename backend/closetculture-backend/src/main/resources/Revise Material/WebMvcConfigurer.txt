@@ -42,7 +42,7 @@ public interface WebMvcConfigurer {
 @Bean
 public WebMvcConfigurer corsConfigurer() {
 
-    // OPTION 1: overriding the methoid directly and make the WebMvcConfigurer as bean ,so spring can use it.
+    // OPTION 1: overriding the method directly and make the WebMvcConfigurer as bean ,so spring can use it.
 
     return new WebMvcConfigurer() {
         @Override
@@ -96,6 +96,7 @@ You want to limit what HTTP actions your frontend is allowed to perform.
 "Allow the frontend to send any custom headers in the request."
 
 🔐 Why it matters:
+
 Browsers block requests that include non-simple headers (like Authorization, Content-Type, X-Custom-Token, etc.) — unless you explicitly allow them.
 
 🚦 Examples:
