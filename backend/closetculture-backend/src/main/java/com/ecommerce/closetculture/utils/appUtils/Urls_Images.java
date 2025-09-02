@@ -23,14 +23,16 @@ public class Urls_Images {
 
     public static Resource getResourceUrl(String whichImages,String collName,Long id,String filename) throws MalformedURLException{
 
-        String location = Paths.get("closetculture-backend","uploads", "Images",
+        String location = Paths.get("uploads", "Images",
                             whichImages, collName, String.valueOf(id), filename)
                        .toString();
-        System.out.println("Looking for file at: " + location);
         
         // "closetculture-backend\\uploads\\Images\\"+whichImages+"\\"+collName+"\\"+id+"\\"+filename;
 
         File file = new File(location);
+
+        System.out.println("Looking for file at: " + file.getAbsolutePath());
+        System.out.println("Exists? " + file.exists());
         
         if(file.exists()){
             Path path = Paths.get(location);
