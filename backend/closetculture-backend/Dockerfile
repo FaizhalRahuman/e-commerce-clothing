@@ -21,5 +21,6 @@ RUN ./mvnw clean package -DskipTests
 # Expose port
 EXPOSE 8080
 
-# Start the app
-CMD ["java", "-jar", "target/ClosetCulture-0.0.1-SNAPSHOT.jar"]
+# Replace the last line in Dockerfile
+CMD ["java", "-cp", "target/ClosetCulture-0.0.1-SNAPSHOT.jar", "com.ecommerce.closetculture.TestDBConnection"]
+
