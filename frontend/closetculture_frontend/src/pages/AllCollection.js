@@ -79,7 +79,7 @@ const AllCollections = () => {
         maxprice: priceRange[1],
         pageNo: pageNo,
         collPerPage:collPerPage
-      })
+      },[size,color,priceRange,pageNo,collPerPage,totColl])
         
       const getCollections = async() => {
 
@@ -90,7 +90,9 @@ const AllCollections = () => {
           // console.log(data);
           setAllCollections(data.collections);
           setTotColl(data.totColl);
+          setCollError('');
       }catch(err){
+        setAllCollections([]);
         console.log("Error while getting filterd and paginated collections in AllCollection.js",err.message);
         setCollError(err.response?.data || err.message);
       }
@@ -142,7 +144,7 @@ const AllCollections = () => {
 
             GetCollectionImg(collection.collId);
         }
-    },[allCollections]);
+    },[allCollections,size,color,priceRange,pageNo,collPerPage,totColl]);
 
 /* OR WE CAN DO LIKE THIS WITH THE USE OF Promise.all()
 

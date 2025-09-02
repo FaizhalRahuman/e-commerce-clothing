@@ -184,5 +184,3 @@ Then in your JSX:
 
 
 
-
-
