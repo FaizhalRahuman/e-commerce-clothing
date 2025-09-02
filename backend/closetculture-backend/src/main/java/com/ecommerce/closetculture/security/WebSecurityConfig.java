@@ -102,7 +102,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**",
                         "/auth/**", "/account/register", "/account/forget-password",
                         "/collection/view-all", "/collection/get-coll-img/**","/collection/pagination","/collection/filter-pagination",
-                        "/product/view-all").permitAll()
+                        "/product/view-all",
+                        "/uploads/**").permitAll()
 
                 .requestMatchers("/account/view-by-id/{accId}",
                 "/collection/view-by-prdId/**","/collection/view-by-collId/**","/collection/filter-pagination-prod/**",

@@ -26,6 +26,7 @@ public class Urls_Images {
         String location = Paths.get("uploads", "Images",
                             whichImages, collName, String.valueOf(id), filename)
                        .toString();
+        System.out.println("Looking for file at: " + location);
         
         // "closetculture-backend\\uploads\\Images\\"+whichImages+"\\"+collName+"\\"+id+"\\"+filename;
 
